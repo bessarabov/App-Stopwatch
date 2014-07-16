@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+# PODNAME: stopwatch
+
 use strict;
 use warnings FATAL => 'all';
 
