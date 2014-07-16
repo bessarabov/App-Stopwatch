@@ -1,0 +1,62 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings FATAL => 'all';
+
+use Carp;
+use POSIX qw(floor);
+
+my $true = 1;
+my $false = '';
+
+sub clear {
+    # '01:02:12' is 8 symbols
+    my $char_count = 8;
+
+    print "\r" x $char_count;
+    return '';
+}
+
+sub print_seconds {
+    my ($seconds) = @_;
+
+    my ($h, $m, $s) = get_h_m_s($seconds);
+
+    printf("%02d:%02d:%02d", $h, $m, $s);
+
+    return '';
+}
+
+sub get_h_m_s {
+    my ($seconds) = @_;
+
+    my $h = floor($seconds / (60*60));
+    croak 'Number is too big' if $h > 99;
+
+    my $m = floor( ($seconds - $h*60*60) / 60 );
+    my $s = $seconds - $h*60*60 - $m*60;
+
+    return $h, $m, $s;
+}
+
+sub main {
+
+    # unbuffer STDOUT
+    $|++;
+
+    my $seconds = 0;
+
+    while ($true) {
+
+        clear();
+        print_seconds($seconds);
+
+        sleep 1;
+        $seconds++;
+
+    }
+
+}
+main() if not caller;
+
+1;
