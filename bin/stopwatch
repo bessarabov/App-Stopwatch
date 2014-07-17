@@ -41,6 +41,28 @@ sub get_h_m_s {
     return $h, $m, $s;
 }
 
+=begin comment get_seconds_from_string
+
+    get_seconds_from_string( '3s' ); # 3
+    get_seconds_from_string( '20m' ); # 1200
+
+=end comment
+
+=cut
+
+sub get_seconds_from_string {
+    my ($string) = @_;
+
+    if ($string =~ /^([1-9][0-9]*)\s*s$/i) {
+        return $1;
+    } elsif ($string =~ /^([1-9][0-9]*)\s*m$/i) {
+        return $1 * 60;
+    } else {
+        $string = '' if not defined $string;
+        croak "Can't parse string '$string'";
+    }
+}
+
 sub main {
 
     # unbuffer STDOUT
