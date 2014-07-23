@@ -187,6 +187,8 @@ sub main {
 
     my $options = parse_argv(@ARGV);
 
+    my %second2cmd;
+
     if (not $options->{error}) {
         if (grep { $_ eq 'help'} @{$options->{actions}}) {
             print_help();
@@ -195,6 +197,14 @@ sub main {
             print_version();
             exit 0;
         }
+
+        if (grep { $_ eq 'run'} @{$options->{actions}}) {
+            foreach my $run_option (@{$options->{run_options}}) {
+                my $s = get_seconds_from_string($run_option->{time});
+                $second2cmd{$s} = $run_option->{cmd};
+            }
+        }
+
     } else {
         if (grep { $_ eq 'help_cant_be_used_with_other_options'} @{$options->{error_actions}}) {
             print "Error. Help can't be used with other options.\n";
@@ -224,6 +234,9 @@ sub main {
 
         clear();
         print_seconds($seconds);
+        if ($second2cmd{$seconds}) {
+            `$second2cmd{$seconds} 2> /dev/null &`;
+        }
 
         sleep 1;
         $seconds++;
