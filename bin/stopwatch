@@ -63,6 +63,118 @@ sub get_seconds_from_string {
     }
 }
 
+sub parse_argv {
+    my (@argv) = @_;
+
+    # options that can't be used with other options
+    if (@argv == 0) {
+        return {
+            error => 0,
+            actions => [],
+        };
+    } elsif (grep {$_ eq '--help' or $_ eq '-h'} @argv) {
+
+        if (@argv == 1) {
+            return {
+                error => 0,
+                actions => ['help'],
+            };
+        } else {
+            return  {
+                error => 1,
+                error_actions => ['help_cant_be_used_with_other_options'],
+            };
+        }
+
+    } elsif (grep {$_ eq '--version'} @argv) {
+
+        if (@argv == 1) {
+            return {
+                error => 0,
+                actions => ['version'],
+            };
+        } else {
+            return  {
+                error => 1,
+                error_actions => ['version_cant_be_used_with_other_options'],
+            };
+        }
+
+    }
+
+    # options that can be used with other options
+    my @actions;
+    my %result;
+
+    my @run_options;
+
+    my @original_argv = @argv;
+    @argv = ();
+
+    my $run_position;
+    my $run_got_all_options;
+    my $run_time;
+    my $run_cmd;
+
+    # --run
+    for (my $i = 0; $i < @original_argv; $i++) {
+        if ($original_argv[$i] eq '--run') {
+            $run_position = $i;
+            $run_got_all_options = $false;
+        }
+
+        if (defined($run_position)) {
+            if ($run_position == $i) {
+                # do nothing
+            } elsif ($run_position + 1 == $i) {
+                $run_time = $original_argv[$i];
+            } elsif ($run_position + 2 == $i) {
+                $run_cmd = $original_argv[$i];
+                push @run_options, {
+                    time => $run_time,
+                    cmd => $run_cmd,
+                };
+                $run_got_all_options = $true;
+            } else {
+                $run_position = undef;
+            }
+        }
+
+        if (not defined $run_position) {
+            push @argv, $original_argv[$i];
+        }
+    }
+
+    if ((defined $run_got_all_options) and (not $run_got_all_options)) {
+        return {
+            error => 1,
+            error_actions => ['incorrect_run_usage'],
+        };
+    }
+
+    if (@run_options) {
+        push @actions, 'run';
+        $result{run_options} = \@run_options;
+    }
+
+    if (not @argv) {
+        # we parsed all the options
+        return {
+            error => 0,
+            actions => \@actions,
+            %result,
+        }
+    } else {
+        # some options are left
+        return {
+            error => 1,
+            error_actions => ['unknown_option'],
+            error_options => \@argv,
+        };
+    }
+
+}
+
 sub main {
 
     # unbuffer STDOUT
