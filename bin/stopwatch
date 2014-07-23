@@ -175,7 +175,45 @@ sub parse_argv {
 
 }
 
+sub print_help {
+    croak 'TODO help';
+}
+
+sub print_version {
+    croak 'TODO version';
+}
+
 sub main {
+
+    my $options = parse_argv(@ARGV);
+
+    if (not $options->{error}) {
+        if (grep { $_ eq 'help'} @{$options->{actions}}) {
+            print_help();
+            exit 0;
+        } elsif (grep { $_ eq 'version'} @{$options->{actions}}) {
+            print_version();
+            exit 0;
+        }
+    } else {
+        if (grep { $_ eq 'help_cant_be_used_with_other_options'} @{$options->{error_actions}}) {
+            print "Error. Help can't be used with other options.\n";
+            exit 1;
+        } elsif (grep { $_ eq 'version_cant_be_used_with_other_options'} @{$options->{error_actions}}) {
+            print "Error. Version can't be used with other options.\n";
+            exit 1;
+        } elsif (grep { $_ eq 'incorrect_run_usage'} @{$options->{error_actions}}) {
+            print "Error. `--run` should be used with 2 parameters.\n";
+            exit 1;
+        } elsif (grep { $_ eq 'unknown_option'} @{$options->{error_actions}}) {
+            my $postfix = @{$options->{error_options}} > 1 ? 's' : '';
+            print "Error. Got unknown option$postfix: '"
+                . (join "', '", @{$options->{error_options}})
+                . "'.\n"
+                ;
+            exit 1;
+        }
+    }
 
     # unbuffer STDOUT
     $|++;
