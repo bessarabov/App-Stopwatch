@@ -220,7 +220,15 @@ sub main {
 
         if (grep { $_ eq 'run'} @{$options->{actions}}) {
             foreach my $run_option (@{$options->{run_options}}) {
-                my $s = get_seconds_from_string($run_option->{time});
+                my $s;
+
+                eval {
+                    $s = get_seconds_from_string($run_option->{time});
+                };
+                if ($@) {
+                    print "Error. `--run` option '$run_option->{time}' is incorrect.\n";
+                    exit 1;
+                }
                 $second2cmd{$s} = $run_option->{cmd};
             }
         }
