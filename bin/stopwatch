@@ -127,20 +127,6 @@ sub parse_argv {
             };
         }
 
-    } elsif (grep {$_ eq '--version'} @argv) {
-
-        if (@argv == 1) {
-            return {
-                error => 0,
-                actions => ['version'],
-            };
-        } else {
-            return  {
-                error => 1,
-                error_actions => ['version_cant_be_used_with_other_options'],
-            };
-        }
-
     }
 
     # options that can be used with other options
@@ -220,10 +206,6 @@ sub print_help {
     pod2usage();
 }
 
-sub print_version {
-    croak 'TODO version';
-}
-
 sub main {
 
     my $options = parse_argv(@ARGV);
@@ -233,9 +215,6 @@ sub main {
     if (not $options->{error}) {
         if (grep { $_ eq 'help'} @{$options->{actions}}) {
             print_help();
-            exit 0;
-        } elsif (grep { $_ eq 'version'} @{$options->{actions}}) {
-            print_version();
             exit 0;
         }
 
@@ -249,9 +228,6 @@ sub main {
     } else {
         if (grep { $_ eq 'help_cant_be_used_with_other_options'} @{$options->{error_actions}}) {
             print "Error. Help can't be used with other options.\n";
-            exit 1;
-        } elsif (grep { $_ eq 'version_cant_be_used_with_other_options'} @{$options->{error_actions}}) {
-            print "Error. Version can't be used with other options.\n";
             exit 1;
         } elsif (grep { $_ eq 'incorrect_run_usage'} @{$options->{error_actions}}) {
             print "Error. `--run` should be used with 2 parameters.\n";

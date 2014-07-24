@@ -57,8 +57,9 @@ sub main_in_test {
     is_deeply(
         parse_argv('--version'),
         {
-            error => 0,
-            actions => ['version'],
+            error => 1,
+            error_actions => ['unknown_option'],
+            error_options => [ '--version' ],
         },
         '--version',
     );
@@ -94,7 +95,8 @@ sub main_in_test {
         parse_argv('asdf', '--version'),
         {
             error => 1,
-            error_actions => ['version_cant_be_used_with_other_options'],
+            error_actions => ['unknown_option'],
+            error_options => [ 'asdf', '--version' ],
         },
         'asdf --version',
     );
