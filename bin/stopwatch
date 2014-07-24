@@ -2,11 +2,52 @@
 
 # PODNAME: stopwatch
 
+=encoding UTF-8
+
+=head1 SYNOPSIS
+
+stopwatch [options]
+
+ Options:
+
+      --run time cmd    Execute `cmd` at specified time
+      --help            Show this message
+
+=head2 Basic usage
+
+Most simple usage is just to run `stopwatch` without any options. The script
+will start counting seconds and it will output the passed time:
+
+    04:12:54
+
+To stop script use ctrl+c
+
+=head2 Timer feature
+
+You can use this script as a timer. The script can execute command at desired
+time. Here is an example:
+
+    stopwatch --run 10m "terminal-notifier -message '10 min passed'"
+
+This command will start counting seconds but when in 10 minutes after start
+it will execute the command.
+
+The `--run` options must get 2 parameters. First one is the time ('10m', '5s')
+and the second one is the command that should be run at that time. You can
+specify several `--run` options at once.
+
+=head2 Source code
+
+Project url: https://github.com/bessarabov/App-Stopwatch
+
+=cut
+
 use strict;
 use warnings FATAL => 'all';
 
 use Carp;
 use POSIX qw(floor);
+use Pod::Usage;
 
 my $true = 1;
 my $false = '';
@@ -176,7 +217,7 @@ sub parse_argv {
 }
 
 sub print_help {
-    croak 'TODO help';
+    pod2usage();
 }
 
 sub print_version {
