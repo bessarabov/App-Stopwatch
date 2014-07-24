@@ -6,11 +6,6 @@ Simple console stopwatch.
 
 ## Installation
 
-For installation you need [cpanm](https://github.com/miyagawa/cpanminus)
-script. To install it run:
+Just [save the script][script_url] somewhere in the PATH of your system.
 
-    curl -L http://cpanmin.us | perl - --sudo App::cpanminus
-
-And when you have `cpanm` just run:
-
-    cpanm App::Stopwatch
+ [script_url]: https://raw.githubusercontent.com/bessarabov/App-Stopwatch/master/bin/stopwatch
